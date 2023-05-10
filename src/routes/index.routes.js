@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 
-// const { register, login, emailSend } = require('./../controllers/authControler');
+const alunosRoutes = require('./alunos.routes');
 
 
-router.use('/register');
-router.use('/login');
-router.use('/mail')
+router.use('/aluno',alunosRoutes);
+// router.use('/login');
+// router.use('/mail')
 
 
 

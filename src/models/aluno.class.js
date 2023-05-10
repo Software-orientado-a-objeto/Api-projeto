@@ -5,5 +5,5 @@ export class Aluno {
     email;
     telefone;
     minhaTurma;
-
+    notas = [];
 }
