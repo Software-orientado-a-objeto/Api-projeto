@@ -1,6 +1,13 @@
-const bcrypt = require('bcrypt');
+
 const jwt = require('jsonwebtoken');
-const knex = require('knex');
+const knex = require('knex')({
+    client: 'mysql2',
+    connection: 'mysql://root:1234@localhost:3306/trabalho_s',
+    pool: {
+        min: 2,
+        max: 10,
+    }
+});
 
 // const User = require('./../models/user');
 
@@ -17,7 +24,7 @@ const createAccessToken = (user) =>{
 }
 
 
-const userCtrl = {
+const authCtrl = {
 
     /**
      * login de usuario
@@ -26,24 +33,19 @@ const userCtrl = {
         try {
             const {matricula} = req.body;
 
-            const aluno = await knex('alunos').select('*');
+            const aluno = await knex('alunos').where('id_aluno', matricula);
+            const olnyAluno = aluno[0]
 
+            if (!olnyAluno) return res.status(400).json({msg:'user does not exist'});
 
-            const user = await User.findOne({email});
-            if (!user) return res.status(400).json({msg:'user does not exist'});
-
-            const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) return res.status(400).json({msg:'incorret password'});
-
-            const accessToken = createAccessToken({id: user._id});
-            const refreshToken = creatRefreshToken({id: user._id});
+            const accessToken = createAccessToken({id: olnyAluno.id_aluno});
+            const refreshToken = creatRefreshToken({id: olnyAluno.id_aluno});
 
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 path:'/user/refresh_token',
                 maxAge: 7*24*60*60*1000 // 7d
             });
-
 
             return res.json({accessToken});
 
@@ -55,16 +57,13 @@ const userCtrl = {
     loginProfessor: async (req,res) => {
         try {
             const {matricula} = req.body;
-            const professor = await knex('professor').select('*');
+            const professor = await knex('professor').where('id_professor', matricula);
 
-            const user = await User.findOne({email});
-            if (!user) return res.status(400).json({msg:'user does not exist'});
+            const onlyProfessor = professor[0];
+            if (!onlyProfessor) return res.status(400).json({msg:'user does not exist'});
 
-            const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) return res.status(400).json({msg:'incorret password'});
-
-            const accessToken = createAccessToken({id: user._id});
-            const refreshToken = creatRefreshToken({id: user._id});
+            const accessToken = createAccessToken({id: onlyProfessor.id_professor});
+            const refreshToken = creatRefreshToken({id: onlyProfessor.id_professor});
 
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
@@ -83,17 +82,12 @@ const userCtrl = {
     loginSecretaria: async (req,res) => {
         try {
             const {matricula} = req.body;
+            const secretaria =  await knex('secretaria').where('id_secretaria', matricula)[0];
 
-            const secretaria =  await knex('secretaria').select('*');
+            if (!secretaria) return res.status(400).json({msg:'user does not exist'});
 
-            const user = await User.findOne({email});
-            if (!user) return res.status(400).json({msg:'user does not exist'});
-
-            const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) return res.status(400).json({msg:'incorret password'});
-
-            const accessToken = createAccessToken({id: user._id});
-            const refreshToken = creatRefreshToken({id: user._id});
+            const accessToken = createAccessToken({id: secretaria.id_secretaria});
+            const refreshToken = creatRefreshToken({id: secretaria.id_secretaria});
 
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
@@ -146,39 +140,6 @@ const userCtrl = {
     },
 
 
-    /**
-     * pegar usuarios
-     */
-    getUser: async(req, res) =>{
-        try {
-            const user = await User.find().select('-password')
-            if(!user) return res.status(500).json({msg:"User does not exist"})
-    
-            res.json(user)
-
-        } catch (error) {
-            return res.status(500).json({msg:err.message})
-        }
-    },
-
-
-    /**
-     * pegar usuarios id
-     */
-    getUserById: async(req, res) =>{
-        try {
-            const user = await User.findById({user: req.params.id}).select('-password');
-            if(!user) return res.status(500).json({msg:"User does not exist"})
-    
-            res.json(user)
-
-        } catch (error) {
-            return res.status(500).json({msg:err.message})
-        }
-    },
-
-
-
 }
 
-module.exports = userCtrl;
+module.exports = authCtrl;

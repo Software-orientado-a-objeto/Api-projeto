@@ -18,6 +18,24 @@ const AlunoController = {
         const {id} = req.body;
         const alunos = await knex('alunos').where('id_aluno', id);
         return res.json(alunos);
+    },
+
+    async buscarPorTurma(req, res) {
+        const {id} = req.body;
+        const alunos = await knex('alunos').where('id_aluno', id);
+        return res.json(alunos);
+    },
+
+    async inserirAluno(req, res) {
+        const {id} = req.body;
+    },
+
+    async updateAluno(req, res) {
+        const {id} = req.body;
+    },
+
+    async deletarAluno(req, res) {
+        const {id} = req.body;
     }
 }
 
