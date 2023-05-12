@@ -5,6 +5,8 @@ const AlunoController = require('./../controllers/alunos.controller');
 
 
 router.get('/BuscarAlunos',AlunoController.buscar)
+router.post('/BuscarAlunoPorMatricula',AlunoController.buscarBy)
+
 
 
 

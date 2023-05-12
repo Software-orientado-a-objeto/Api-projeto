@@ -6,24 +6,31 @@ require('dotenv').config({
     path: process.env.NODE_ENV === "test" ? ".env.testing" : ".env"
   })
 
-app.use(cors())
-
 const knex = require('knex')({
-    client: 'mysql',
-    version:'8.0.33',
-    connection: {
-        host: '127.0.0.1',//SERVE_HOST
-        port: 3306, //
-        user: 'root',//.SERVE_USER process.env.SERVE_USER
-        password: 'qiDK=_SYJ4cjnK.',//.SERVE_PASSWORD
-        database: 'trabalho_s' //SERVE_DATA_BASE process.env.SERVE_DATA_BASE
+    client: 'mysql2',
+    connection: 'mysql://root:1234@localhost:3306/trabalho_s',
+    pool: {
+        min: 2,
+        max: 10,
     }
 });
 
 const routes = require('./routes/index.routes')
-// app.use('/api',routes);
-app.get(('/api/aluno',AlunoController))
+app.use('/api',routes);
+
+
+// app.use(routes)
+
+app.use(cors(
+    {
+      origin: '*',
+    }
+  ));
+//   app.get('/test',async (req,res) => res.json({teste:'dd'}))
+// app.get(('/api/aluno',(req,res) => res.json('')))
 
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    console.log(`Server is running on port http://localhost:${port}/`);
 });
+
+module.exports = knex;
