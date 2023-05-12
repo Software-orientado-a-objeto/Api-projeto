@@ -27,15 +27,34 @@ const AlunoController = {
     },
 
     async inserirAluno(req, res) {
-        const {id} = req.body;
+        const {aluno} = req.body;
+        let result = await knex('alunos').insert(aluno);
+
+        if(!result) return res.status(400).json({msg:'user does not inserted'});
+
+        return res.status(200).json({msg:'user inserted'});
+
     },
 
     async updateAluno(req, res) {
-        const {id} = req.body;
+        const {aluno} = req.body;
+
+        let result = await knex('alunos').where({ id_aluno: aluno.id_aluno }).update(aluno)
+
+        if(!result) return res.status(400).json({msg:'user does not updated'});
+
+        return res.status(200).json({msg:'user updated'});
+
     },
 
     async deletarAluno(req, res) {
         const {id} = req.body;
+        const aluno = await  knex('alunos').where('id_aluno', id).del()
+
+        if(!aluno) return res.status(400).json({msg:'user does not exist'});
+
+        return res.status(200).json({msg:'user deleted'});
+
     }
 }
 
