@@ -39,7 +39,7 @@ const ProfessorController = {
     async updateProfessor(req, res) {
         const {professor} = req.body;
 
-        let result = await knex('professor').where({ id_aluno: professor.id_professor }).update(aluno)
+        let result = await knex('professor').where({ id_professor: professor.id_professor }).update(professor)
 
         if(!result) return res.status(400).json({msg:'user does not updated'});
 
