@@ -4,7 +4,7 @@ const NotasController = require('./../controllers/notas.controller');
 
 
 router.get('/BuscarNotas',NotasController.buscar)
-router.post('/buscarPorAluno',NotasController.buscarBy)
+router.post('/buscarPorAluno',NotasController.buscarPorAluno)
 router.post('/BuscarPorTurma',NotasController.buscarPorTurma)
 
 
