@@ -37,9 +37,15 @@ const aulaController = {
     async inserirAula(req, res) {
 
         const {aula} = req.body;
+
+        const aulaSalva = await knex('aula').where({ id_professor: aula.id_professor, horario: aula.horario });
+        
+        if (aulaSalva.length > 0) {
+            if(!result) return res.status(400).json({msg:'professor ja tem esta aula'});
+        }
+
         let result = await knex('aula').insert(aula);
         if(!result) return res.status(400).json({msg:'aula does not inserted'});
-
         return res.status(200).json({msg:'aula inserted'});
     },
 
