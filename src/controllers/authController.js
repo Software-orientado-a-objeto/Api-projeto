@@ -34,7 +34,7 @@ const authCtrl = {
             const {matricula} = req.body;
 
             const aluno = await knex('alunos').where('id_aluno', matricula);
-            const olnyAluno = aluno[0]
+            let olnyAluno = aluno[0]
 
             if (!olnyAluno) return res.status(400).json({msg:'user does not exist'});
 
@@ -47,7 +47,10 @@ const authCtrl = {
                 maxAge: 7*24*60*60*1000 // 7d
             });
 
-            return res.json({accessToken});
+            const turmas = await knex('turmas').where('id_turmas', olnyAluno.id_turmas);
+            olnyAluno.turma = turmas[0].nm_turma;
+
+            return res.json({accessToken, user: olnyAluno});
 
         } catch (err) {
             return res.status(500).json({msg: err.message});
@@ -59,7 +62,7 @@ const authCtrl = {
             const {matricula} = req.body;
             const professor = await knex('professor').where('id_professor', matricula);
 
-            const onlyProfessor = professor[0];
+            let onlyProfessor = professor[0];
             if (!onlyProfessor) return res.status(400).json({msg:'user does not exist'});
 
             const accessToken = createAccessToken({id: onlyProfessor.id_professor});
@@ -72,7 +75,10 @@ const authCtrl = {
             });
 
 
-            return res.json({accessToken});
+            const disciplina = await knex('disciplinas').where('id_disciplina', id);
+            onlyProfessor.disciplina = disciplina[0].nm_disciplina;
+
+            return res.json({accessToken, user: onlyProfessor});
 
         } catch (err) {
             return res.status(500).json({msg: err.message});
@@ -96,7 +102,7 @@ const authCtrl = {
             });
 
 
-            return res.json({accessToken});
+            return res.json({accessToken, user: secretaria});
 
         } catch (err) {
             return res.status(500).json({msg: err.message});
