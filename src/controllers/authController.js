@@ -75,7 +75,7 @@ const authCtrl = {
             });
 
 
-            const disciplina = await knex('disciplinas').where('id_disciplina', id);
+            const disciplina = await knex('disciplinas').where('id_disciplina', onlyProfessor.id_disciplina);
             onlyProfessor.disciplina = disciplina[0].nm_disciplina;
 
             return res.json({accessToken, user: onlyProfessor});
@@ -88,12 +88,13 @@ const authCtrl = {
     loginSecretaria: async (req,res) => {
         try {
             const {matricula} = req.body;
-            const secretaria =  await knex('secretaria').where('id_secretaria', matricula)[0];
+            const secretaria =  await knex('secretaria').where('id_secretaria', matricula);
 
-            if (!secretaria) return res.status(400).json({msg:'user does not exist'});
+            let onlySecretaria = secretaria[0];
+            if (!onlySecretaria) return res.status(400).json({msg:'user does not exist'});
 
-            const accessToken = createAccessToken({id: secretaria.id_secretaria});
-            const refreshToken = creatRefreshToken({id: secretaria.id_secretaria});
+            const accessToken = createAccessToken({id: onlySecretaria.id_secretaria});
+            const refreshToken = creatRefreshToken({id: onlySecretaria.id_secretaria});
 
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
@@ -102,7 +103,7 @@ const authCtrl = {
             });
 
 
-            return res.json({accessToken, user: secretaria});
+            return res.json({accessToken, user: onlySecretaria});
 
         } catch (err) {
             return res.status(500).json({msg: err.message});
