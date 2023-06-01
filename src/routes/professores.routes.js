@@ -13,6 +13,7 @@ router.post('/UpdateProfessor',ProfessorController.updateProfessor);
 router.post('/DeletarProfessor',ProfessorController.deletarProfessor);
 
 //casos de Uso professor
+router.post('/buscarTumasDaAula',ProfessorController.buscarTumasDaAula);
 
 
 
