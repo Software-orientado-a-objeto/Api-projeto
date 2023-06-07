@@ -102,6 +102,29 @@ const ProfessorController = {
         }
 
         return res.status(200).json(turmaProcess);
+    },
+    async salvarNotaAluno(req, res) {
+        const { nota } = req.body;
+
+        const temNota = await knex('notas')
+                    .count('*')
+                    .where('id_disciplina', nota.id_disciplina)
+                    .where('id_aluno', nota.id_aluno)
+                    .where('periodo', nota.periodo)
+
+
+        if (temNota[0]['count(*)'] > 0) {
+            await knex('notas').where({
+                id_aluno: nota.id_aluno,
+                id_disciplina: nota.id_disciplina,
+                periodo: nota.periodo
+            }).update(nota);
+            return res.status(200).json({msg:"funcionando"});
+        } else {
+            await knex('notas').insert(nota);
+            return res.status(200).json({msg:"funcionando"});
+        }
+
     }
 }
 

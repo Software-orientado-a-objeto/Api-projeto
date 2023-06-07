@@ -14,6 +14,7 @@ router.post('/DeletarProfessor',ProfessorController.deletarProfessor);
 
 //casos de Uso professor
 router.post('/buscarTumasDaAula',ProfessorController.buscarTumasDaAula);
+router.post('/salvarNotaAluno',ProfessorController.salvarNotaAluno);
 
 
 
