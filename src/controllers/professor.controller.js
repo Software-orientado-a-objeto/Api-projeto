@@ -125,7 +125,45 @@ const ProfessorController = {
             return res.status(200).json({msg:"funcionando"});
         }
 
+    },
+
+    async getAulasProfessor(req, res) {
+        const { idProfessor, diciplina } = req.body;
+        const aulas = await knex('aula').where('id_professor', idProfessor);
+
+        let aulasAjustadas = [];
+
+        for (let i = 0; i < aulas.length; i++) {
+            let e = aulas[i];
+            let diaSemana = "";
+
+            if(e.horario.includes('seg')){
+                diaSemana = 'Segunda';
+            } else if(e.horario.includes('ter')) {
+                diaSemana = 'Terça';
+            } else if(e.horario.includes('qua')) {
+                diaSemana = 'Quarta';
+            } else if(e.horario.includes('qui')) {
+                diaSemana = 'Quinta';
+            } else if(e.horario.includes('sex')) {
+                diaSemana = 'Sexta';
+            }
+
+            let turma = await knex('turmas')
+            .select('nm_turma as nome')
+            .where('id_turmas', '=', e.id_turmas)
+
+            let aula = {
+                dia: diaSemana,
+                disciplina: diciplina,
+                turma: turma[0].nome,
+                hora: e.horario.substring(4)
+            }
+            aulasAjustadas.push(aula);
+        }
+        return res.status(200).json(aulasAjustadas);
     }
+    
 }
 
 
