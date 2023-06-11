@@ -55,6 +55,47 @@ const AlunoController = {
 
         return res.status(200).json({msg:'user deleted'});
 
+    },
+
+    // casos de uso
+
+    async getBoletim(req, res) {
+        const { id } = req.body;
+
+        const alunos = await knex('alunos').where('id_aluno', id);
+        const disciplinas = await knex('disciplinas').select('*');
+
+        let boletim = {
+            aluno: alunos[0].nm_aluno
+        }
+
+        let disciplinasSalvas = [];
+
+        console.log(disciplinas)
+
+        for (let i = 0; i < disciplinas.length; i++) {
+            const e = disciplinas[i];
+
+            const n = await knex('notas')
+                    .select('periodo', 'nota')
+                    .where('id_disciplina', '=', e.id_disciplina )
+                    .andWhere('id_aluno', '=', id);
+            
+            let diciplina = {
+                nome: e.nm_disciplina,
+                bimestre1: n.filter(x => x.periodo == "primeiroBimestre").length > 0 ? n.filter(x => x.periodo == "primeiroBimestre")[0].nota : null,
+                bimestre2: n.filter(x => x.periodo == "segundoBimestre").length > 0 ? n.filter(x => x.periodo == "segundoBimestre")[0].nota : null,
+                bimestre3: n.filter(x => x.periodo == "terceiroBimestre").length > 0 ? n.filter(x => x.periodo == "terceiroBimestre")[0].nota : null,
+                bimestre4: n.filter(x => x.periodo == "quartoBimestre").length > 0 ? n.filter(x => x.periodo == "quartoBimestre")[0].nota : null,
+                recuperacao: n.filter(x => x.periodo == "recuperacao").length > 0 ? n.filter(x => x.periodo == "recuperacao")[0].nota : null
+            }
+            console.log(diciplina)
+            disciplinasSalvas.push(diciplina);
+        }
+
+        boletim.disciplinas = disciplinasSalvas;
+
+        return res.status(200).json(boletim);
     }
 }
 
