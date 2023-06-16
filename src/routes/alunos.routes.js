@@ -15,6 +15,7 @@ router.post('/DeletarAluno',AlunoController.deletarAluno);
 
 //casos de Uso aluno
 router.post('/getBoletim',AlunoController.getBoletim);
+router.post('/getAulasAluno',AlunoController.getAulasAluno);
 
 
 

@@ -96,6 +96,49 @@ const AlunoController = {
         boletim.disciplinas = disciplinasSalvas;
 
         return res.status(200).json(boletim);
+    },
+
+    async getAulasAluno(req, res) {
+        const { idAluno } = req.body;
+        const aluno = await knex('alunos').where('id_aluno', idAluno);
+
+        const aulas = await knex('aula').where('id_turmas', aluno[0].id_turmas);
+
+        let aulasAjustadas = [];
+
+        for (let i = 0; i < aulas.length; i++) {
+            let e = aulas[i];
+            let diaSemana = "";
+
+            if(e.horario.includes('seg')){
+                diaSemana = 'Segunda';
+            } else if(e.horario.includes('ter')) {
+                diaSemana = 'Terça';
+            } else if(e.horario.includes('qua')) {
+                diaSemana = 'Quarta';
+            } else if(e.horario.includes('qui')) {
+                diaSemana = 'Quinta';
+            } else if(e.horario.includes('sex')) {
+                diaSemana = 'Sexta';
+            }
+
+            let turma = await knex('turmas')
+            .select('nm_turma as nome')
+            .where('id_turmas', '=', e.id_turmas)
+
+
+            const professor = await knex('professor').where('id_professor', e.id_professor);
+            const disciplina = await knex('disciplinas').where('id_disciplina', professor[0].id_disciplina);
+
+            let aula = {
+                dia: diaSemana,
+                disciplina: disciplina[0].nm_disciplina,
+                turma: turma[0].nome,
+                hora: e.horario.substring(4)
+            }
+            aulasAjustadas.push(aula);
+        }
+        return res.status(200).json(aulasAjustadas);
     }
 }
 
