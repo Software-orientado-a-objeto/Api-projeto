@@ -2,12 +2,12 @@ const express = require('express');
 const router = express.Router();
 const AulaController = require('./../controllers/aula.controller');
 
-router.get('/BuscarNotas',AulaController.buscar)
+router.get('/Buscar',AulaController.buscar)
 router.post('/buscarPorTurmas',AulaController.buscarByTurmas)
 router.post('/BuscarPorProfessor',AulaController.buscarByProfessor)
 
-router.post('/InserirTurmas',AulaController.inserirAula);
-router.post('/UpdateTurmas',AulaController.updateAula);
-router.post('/DeletarTurmas',AulaController.deletarAula);
+router.post('/Inserir',AulaController.inserirAula);
+router.post('/Update',AulaController.updateAula);
+router.post('/Deletar',AulaController.deletarAula);
 
 module.exports = router;
