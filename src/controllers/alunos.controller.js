@@ -10,7 +10,12 @@ const knex = require('knex')({
 
 const AlunoController = {
     async buscar(req, res) {
-        const alunos = await knex('alunos').select('*');
+        let alunos = await knex('alunos').select('*');
+        for (let index = 0; index < alunos.length; index++) {
+            const e = alunos[index];
+            const turma = await knex('turmas').where('id_turmas', e.id_turmas);
+            alunos[index].turma = turma[0].nm_turma;
+        }
         return res.json(alunos);
     },
 
