@@ -13,7 +13,14 @@ const knex = require('knex')({
 const ProfessorController = {
 
     async buscar(req, res) {
-        const professor = await knex('professor').select('*');
+        let professor = await knex('professor').select('*');
+
+        for (let index = 0; index < professor.length; index++) {
+            const onlyProfessor = professor[index];
+            const disciplina = await knex('disciplinas').where('id_disciplina', onlyProfessor.id_disciplina);
+            professor[index].disciplina = disciplina[0].nm_disciplina;
+        }
+        
         return res.json(professor);
     },
 
