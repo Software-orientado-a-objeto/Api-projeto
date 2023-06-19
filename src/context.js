@@ -9,21 +9,10 @@ require('dotenv').config({
 
 app.use(cors());
 
-const knex = require('knex')({
-  client: 'mysql2',
-  connection: 'mysql://root:1234@localhost:3306/trabalho_s',
-  pool: {
-    min: 2,
-    max: 10,
-  }
-});
-
 const routes = require('./routes/index.routes')
 app.use('/api', routes);
 
-
 // app.use(routes)
-
 
 //   app.get('/test',async (req,res) => res.json({teste:'dd'}))
 // app.get(('/api/aluno',(req,res) => res.json('')))
@@ -31,5 +20,3 @@ app.use('/api', routes);
 app.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}/`);
 });
-
-module.exports = knex;
